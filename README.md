@@ -2,17 +2,21 @@
 
 یک سرواژه پنج حرفی برای پنج اصل در طراحی نرم افزار است. این اصول به منظور طراحی نرم افزار هایی با قابلیت درک پذیری، انعطاف پذیری، توسعه و نگهداری بیشتر تعریف شده اند. 
 
-1. **S** ingle Responsibility Principle
-2. **O** pen/Closed Principle
-3. **L** iskov Substitution Principle
-4. **I** nterface Segregation Principle
-5. **D** ependency Inversion Principle
+<ul>
+<li><p><a href="#s"><b style="font-size:36px;">S</b> ingle Responsibility Principle</a></p></li>
+<li><p><a href="#o"><b style="font-size:36px;">O</b> pen/Closed Principle </a></p></li>
+<li><p><b style="font-size:36px;">L</b> iskov Substitution Principle </p></li>
+<li><p><b style="font-size:36px;">I</b> nterface Segregation Principle </p></li>
+<li><p><b style="font-size:36px;">D</b> ependency Inversion Principle </p></li>
+</ul>
 ----------
+<div id="s"></div>
 
 ## Single Responsibility Principle
-این اصل به ما می گوید که هر کلاس فقط باید یک دلیل برای تغییر داشته باشد. به این معنی که هر کلاس فقط باید مسئول انجام یک عملکرد باشد.
+**این اصل به این معنی است که یک کلاس فقط باید به سبب یک دلیل تغغیر کند . به عبارتی دیگر، هر کلاس تنها باید مسئول انجام یک عملکرد باشد .**
 
 برای درک بهتر این اصل به مثال زیر توجه کنید:
+
 
     public class Order
     {
@@ -62,12 +66,13 @@
     }
 
 در این کد، تغییر احتمالی در آینده، در هر یک از متدها فقط باعث تغییر در کلاس مربوطه با کمترین تاثیر در کلاس های دیگر خواهد شد.
-
+</div>
 ----------
+<div id="o"></div>
 
 ## Open/Closed Principle
 
-این اصل به ما می گوید که یک کلاس باید برای توسعه، باز و برای تغییر، بسته باشد. به این معنی که رفتار کلاس باید دارای قابلیت توسعه باشد بدون ایجاد تغییر در کد کلاس.
+**این اصل به ما می گوید که یک کلاس باید برای توسعه، باز و برای تغییر، بسته باشد. به این معنی که رفتار کلاس باید بدون ایجاد تغییر در کد آن، دارای قابلیت توسعه باشد .**
 
 برای درک بهتر این اصل به مثال زیر توجه کنید:
 
@@ -115,7 +120,7 @@
 
 در این پیاده سازی دو نوع  ارسال ***زمینی*** و ***هوایی*** پیش بینی شده است. حال فرض کنید در آینده بخواهیم نوع ارسال ***دریایی*** را هم به سیستم اضافه کنیم. در این صورت مجبوریم کد کلاس **order** را تغییر دهیم.
 
-   می توانیم این مشکل را با به کار گیری Strategy Pattern حل کنیم. برای این منظور روش های مختلف ارسال سفارش را به کلاس های جداگانه با یک interface مشترک تبدیل می کنیم.
+   می توانیم این مشکل را با به کار گیری Strategy Pattern حل کنیم. برای این منظور روش های مختلف ارسال سفارش را با یک interface مشترک به کلاس های جداگانه تبدیل می کنیم.
 
 
     public class Order
@@ -153,11 +158,12 @@
     {
         public float GetCost(Order order)
         {
+            // Free ground delivery on big orders
             if(order.GetTotal() > 100) 
             {
                 return 0;
             }
-
+            // $1.5 per Kilogram, but $20 minimum
             return max(10, order.GetTotalWeight() * 1.5f);
         }
     }
@@ -166,8 +172,20 @@
     {
         public float GetCost(Order order)
         {
+            // $3 per Kilogram, but $20 minimum
             return max(20, order.GetTotalWeight() * 3);
+        }
+    }
+----------
+    public class Sea : Shipping
+    {
+        public float GetCost(Order order)
+        {
+            // $2.25 per Kilogram, but $15 minimum
+            return max(15, order.GetTotalWeight() * 2.25);
         }
     }
 
 به این ترتیب هر زمان بخواهیم یک روش ارسال جدید به سامانه اضافه کنیم کافیست یک کلاس جدید (مثلا Sea) از اینترفیس **Shipping** مشتق کنیم بدون کوچکترین تغییر در کلاس **Order**.
+
+به این ترتیب هر زمان بخواهیم یک روش ارسال جدید به سامانه اضافه کنیم، بدون کوچکترین تغییر در کلاس **Order** می توانیم یک کلاس جدید (مثلا Sea) از اینترفیس **Shipping** مشتق کنیم.
