@@ -2,17 +2,18 @@
 
 یک سرواژه پنج حرفی برای پنج اصل در طراحی نرم افزار است. این اصول به منظور طراحی نرم افزار هایی با قابلیت درک پذیری، انعطاف پذیری، توسعه و نگهداری بیشتر تعریف شده اند. 
 
-<ul>
-<li><p><a href="#s"><b style="font-size:36px;">S</b> ingle Responsibility Principle</a></p></li>
-<li><p><a href="#o"><b style="font-size:36px;">O</b> pen/Closed Principle </a></p></li>
-<li><p><b style="font-size:36px;">L</b> iskov Substitution Principle </p></li>
-<li><p><b style="font-size:36px;">I</b> nterface Segregation Principle </p></li>
-<li><p><b style="font-size:36px;">D</b> ependency Inversion Principle </p></li>
-</ul>
+## لیست مطالب
+
+- [**S** ingle Responsibility Principle](#Single-Responsibility-Principle)
+- [**O** pen/Closed Principle](#Open/Closed-Principle)
+- [**L** iskov Substitution Principle](#Liskov-Substitution-Principle)
+- **I** nterface Segregation Principle
+- **D** ependency Inversion Principle
+
 ----------
-<div id="s"></div>
 
 ## Single Responsibility Principle
+
 **این اصل به این معنی است که یک کلاس فقط باید به سبب یک دلیل تغغیر کند . به عبارتی دیگر، هر کلاس تنها باید مسئول انجام یک عملکرد باشد .**
 
 برای درک بهتر این اصل به مثال زیر توجه کنید:
@@ -66,9 +67,8 @@
     }
 
 در این کد، تغییر احتمالی در آینده، در هر یک از متدها فقط باعث تغییر در کلاس مربوطه با کمترین تاثیر در کلاس های دیگر خواهد شد.
-</div>
+
 ----------
-<div id="o"></div>
 
 ## Open/Closed Principle
 
@@ -189,3 +189,73 @@
 به این ترتیب هر زمان بخواهیم یک روش ارسال جدید به سامانه اضافه کنیم کافیست یک کلاس جدید (مثلا Sea) از اینترفیس **Shipping** مشتق کنیم بدون کوچکترین تغییر در کلاس **Order**.
 
 به این ترتیب هر زمان بخواهیم یک روش ارسال جدید به سامانه اضافه کنیم، بدون کوچکترین تغییر در کلاس **Order** می توانیم یک کلاس جدید (مثلا Sea) از اینترفیس **Shipping** مشتق کنیم.
+
+----------
+
+## Liskov Substitution Principle
+
+**اصل liskov به معنای این است که اشیاء زیرکلاس بدون ایجاد خطا در برنامه به مانند کلاسی که از آن مشتق شده اند رفتار کنند. این اصل زمان توسعه کتابخانه ها و فریم ورک ها بسیار مهم و بحرانی می شود زیرا کلاس های شما توسط کسانی استفاده خواهد شد که به طور مستقیم به کد های آن دسترسی ندارند.**
+
+برای درک بهتر این اصل به مثال زیر توجه کنید:
+
+    public class Vehicle {
+        public void StartEngine() {
+            // Start engine
+        }
+ 
+        public void DoMovement() {
+            // Move
+        }
+    
+        public void DoSail() {
+            // Sail
+        }
+    }
+
+در اینجا یک کلاس Vehicle داریم که دارای سه عملکرد <code>startEngine</code>, <code>doMovement</code>, <code>doSail</code> است. این کلاس خود نیز دارای سه فرزند Car, Bicycle و Ship است. حال بدون رعایت اصل liskov زیر کلاس ها را پیاده سازی می کنیم:
+
+    public class Ship: Vehicle {
+        // Ship fields and methods
+    }
+----------
+    public class Bicycle: Vehicle {
+        // Can not start engine
+        // Can not sail
+    }
+
+اما دوچرخه نه موتور دارد و نه می تواند روی آب حرکت کند. پس نمی‌تواند دو متد از کلاسِ پدر را به ارث ببرد. حال کاربری که از کلاس Bicycle استفاده می کند، از این اتفاق خبر ندارد و پس از فراخوانی متد <code>startEngine</code>, با ارور مواجه می شود. در اینجا اصل liskov نقض می شود زیرا کلاس دوچرخه، رفتار و ویژگی های کلاس پدر را تغییر داده است و برنامه نویس مجبور شده است برای حل این مشکل، کد کلاس را ویرایش کند و در برنامه خود تغییراتی ایجاد کند.
+
+برای جلوگیری از پیشآمدن اینگونه مشکلات و رعایت اصل liskov, کد ها را بازنویسی می کنیم: 
+
+    public class Vehicle {
+        public void DoMovement() {
+            // Move
+        }
+    }
+
+    public class VehicleWithoutEngine: Vehicle {
+        // Implement behaviour of vehicles which has not engine
+    }
+
+    public class VehicleWithEngine: Vehicle {
+        public void StartEngine(){
+            // Start engine   
+        }
+        // Implement behaviour of vehicles which has engine
+    }
+----------
+    public class Bicycle: VehicleWithoutEngine {
+        // Bicycle behaviours
+    }
+
+    public class Ship: VehicleWithEngine {
+        public void DoSail(){
+            // Sailing
+        }
+        // Ship behaviours
+    }
+
+    public class Car: VehicleWithEngine {
+        // Car behaviours
+    }
+
